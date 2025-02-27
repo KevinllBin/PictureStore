@@ -88,8 +88,10 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, computed } from 'vue'
-  import { Message } from '@arco-design/web-vue'
+  import { ref, computed, onMounted } from 'vue'
+  import { Message, Modal } from '@arco-design/web-vue'
+  import { useAuthStore } from '@/store/auth'
+  import { useRouter } from 'vue-router'
   
   interface Image {
     id: number
@@ -98,6 +100,7 @@
     category: string
     uploadDate: Date
     isFavorite: boolean
+    description:string
   }
   
   // 状态
@@ -116,7 +119,8 @@
       url: 'https://picsum.photos/300/200?random=1',
       category: 'scenery',
       uploadDate: new Date('2025-02-22 09:25:24'),
-      isFavorite: false
+      isFavorite: false,
+      description: '这是一张美丽的山川风景图片'
     },
     // 可以添加更多示例数据
   ])
@@ -180,6 +184,29 @@
     // 实现查看图片详情的逻辑
     console.log('查看图片:', image)
   }
+  
+  const authStore = useAuthStore()
+  const router = useRouter()
+
+  onMounted(()=>{
+    //初始化认证状态
+    authStore.initializeAuth();
+
+    if(!authStore.isLoggedIn){
+      Modal.confirm({
+        title:'提示',
+        content:'您还未登录，可以选择登录',
+        okText:'登录',
+        cancelText:'关闭',
+        onOk:()=>{
+          router.push('/login')
+        },
+        oncancel:()=>{
+          console.log('用户选择关闭提示框')
+        }
+      })
+    }
+  })
   </script>
   
   <style scoped>

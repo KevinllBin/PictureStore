@@ -11,6 +11,8 @@ import {
   IconHeartFill,
   IconEye
 } from '@arco-design/web-vue/es/icon'
+import { createPinia } from 'pinia'
+import { useAuthStore } from './store/auth'
 
 const app = createApp(App)
 
@@ -24,6 +26,16 @@ const icons = [
 ]
 
 icons.forEach(icon => app.component(icon.name as string, icon))
+
+// 创建 Pinia 实例
+const pinia = createPinia()
+
+// 使用 Pinia
+app.use(pinia)
+
+//初始化认证状态
+const authStore = useAuthStore()
+authStore.initializeAuth()
 
 app.use(ArcoVue)
 app.use(router)
